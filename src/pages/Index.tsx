@@ -3,6 +3,7 @@ import { Search, BookOpen, Library } from "lucide-react";
 import { books, categories, Category, Book } from "@/data/books";
 import BookCard from "@/components/BookCard";
 import BookModal from "@/components/BookModal";
+import AdBanner from "@/components/AdBanner";
 
 const Index = () => {
   const [search, setSearch] = useState("");
@@ -86,12 +87,20 @@ const Index = () => {
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filtered.map((book, i) => (
-              <BookCard
-                key={book.id}
-                book={book}
-                onView={setSelectedBook}
-                index={i}
-              />
+              <>
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  onView={setSelectedBook}
+                  index={i}
+                />
+                {/* Insert a subtle inline ad after every 4th book */}
+                {i === 3 && (
+                  <div key="ad-inline" className="sm:col-span-2">
+                    <AdBanner variant="inline" />
+                  </div>
+                )}
+              </>
             ))}
           </div>
         ) : (
@@ -103,6 +112,9 @@ const Index = () => {
           </div>
         )}
       </section>
+
+      {/* Non-intrusive bottom ad bar */}
+      <AdBanner variant="bottom" />
 
       {/* Footer */}
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
