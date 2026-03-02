@@ -158,7 +158,7 @@ export const books: Book[] = [
   },
   {
     id: "13",
-    title: "CIT Textbooks Collection",
+    title: "MGM 211/311",
     author: "CIT Faculty",
     category: "Programming",
     description:
