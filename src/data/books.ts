@@ -156,4 +156,16 @@ export const books: Book[] = [
     pages: 792,
     year: 2021,
   },
+  {
+    id: "13",
+    title: "CIT Textbooks Collection",
+    author: "CIT Faculty",
+    category: "Programming",
+    description:
+      "A curated collection of essential textbooks for Computer & Information Technology students.",
+    cover: "",
+    pages: 500,
+    year: 2024,
+    pdfUrl: "https://idczsfnlvpsiwgsdxjmr.supabase.co/storage/v1/object/public/cit-books-00//TEXT-BOOKS.pdf",
+  },
 ];

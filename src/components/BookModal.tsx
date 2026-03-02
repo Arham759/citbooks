@@ -62,14 +62,23 @@ const BookModal = ({ book, onClose }: BookModalProps) => {
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity">
+            <a
+              href={book.pdfUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 pointer-events-none" : ""}`}
+            >
               <BookOpen className="w-5 h-5" />
               Read PDF
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-2 bg-accent text-accent-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity">
+            </a>
+            <a
+              href={book.pdfUrl || "#"}
+              download
+              className={`flex-1 flex items-center justify-center gap-2 bg-accent text-accent-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 pointer-events-none" : ""}`}
+            >
               <Download className="w-5 h-5" />
               Download
-            </button>
+            </a>
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
