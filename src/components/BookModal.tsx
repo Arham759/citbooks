@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Book } from "@/data/books";
 import { X, Download, BookOpen, FileText, Calendar, User } from "lucide-react";
 
@@ -7,6 +8,7 @@ interface BookModalProps {
 }
 
 const BookModal = ({ book, onClose }: BookModalProps) => {
+  const navigate = useNavigate();
   if (!book) return null;
 
   return (
@@ -63,7 +65,7 @@ const BookModal = ({ book, onClose }: BookModalProps) => {
           {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
-              onClick={() => book.pdfUrl && window.open(book.pdfUrl, '_blank')}
+              onClick={() => { onClose(); navigate(`/read/${book.id}`); }}
               disabled={!book.pdfUrl}
               className={`flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 cursor-not-allowed" : ""}`}
             >
