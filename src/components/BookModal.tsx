@@ -62,23 +62,28 @@ const BookModal = ({ book, onClose }: BookModalProps) => {
 
           {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <a
-              href={book.pdfUrl || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 pointer-events-none" : ""}`}
+            <button
+              onClick={() => book.pdfUrl && window.open(book.pdfUrl, '_blank')}
+              disabled={!book.pdfUrl}
+              className={`flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <BookOpen className="w-5 h-5" />
               Read PDF
-            </a>
-            <a
-              href={book.pdfUrl || "#"}
-              download
-              className={`flex-1 flex items-center justify-center gap-2 bg-accent text-accent-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 pointer-events-none" : ""}`}
+            </button>
+            <button
+              onClick={() => {
+                if (!book.pdfUrl) return;
+                const a = document.createElement('a');
+                a.href = book.pdfUrl;
+                a.download = book.title + '.pdf';
+                a.click();
+              }}
+              disabled={!book.pdfUrl}
+              className={`flex-1 flex items-center justify-center gap-2 bg-accent text-accent-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <Download className="w-5 h-5" />
               Download
-            </a>
+            </button>
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
