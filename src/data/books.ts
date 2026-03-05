@@ -158,7 +158,7 @@ export const books: Book[] = [
   },
   {
     id: "13",
-    title: "MGM 211/311",
+    title: "MGM 211",
     author: "CIT Faculty",
     category: "Programming",
     description:
@@ -166,6 +166,6 @@ export const books: Book[] = [
     cover: "",
     pages: 500,
     year: 2024,
-    pdfUrl: "https://idczsfnlvpsiwgsdxjmr.supabase.co/storage/v1/object/public/cit-books-00/TEXT-BOOKS.pdf",
+    pdfUrl: "https://idczsfnlvpsiwgsdxjmr.supabase.co/storage/v1/object/public/cit-books-00/cit-mgm-211",
   },
 ];
