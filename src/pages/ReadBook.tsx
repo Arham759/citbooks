@@ -65,12 +65,33 @@ const ReadBook = () => {
       </header>
 
       {/* PDF Viewer */}
-      <div className="flex-1">
-        <iframe
-          src={book.pdfUrl}
-          title={book.title}
-          className="w-full h-[calc(100vh-3.5rem)] border-none"
-        />
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8">
+        <BookOpen className="w-20 h-20 text-accent" />
+        <h2 className="font-display text-2xl font-bold text-foreground text-center">
+          {book.title}
+        </h2>
+        <p className="text-muted-foreground text-center max-w-md">
+          Use the buttons below to view or download the PDF.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <a
+            href={book.pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            <BookOpen className="w-5 h-5" />
+            Open PDF
+          </a>
+          <a
+            href={book.pdfUrl}
+            download={book.title + ".pdf"}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:opacity-90 transition-opacity"
+          >
+            <Download className="w-5 h-5" />
+            Download PDF
+          </a>
+        </div>
       </div>
     </div>
   );
