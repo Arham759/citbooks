@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { Book } from "@/data/books";
 import { X, Download, BookOpen, FileText, Calendar, User } from "lucide-react";
 
 interface BookModalProps {
   book: Book | null;
   onClose: () => void;
+  onRead?: (book: Book) => void;
 }
 
 const BookModal = ({ book, onClose }: BookModalProps) => {
