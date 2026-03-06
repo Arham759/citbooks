@@ -11,37 +11,9 @@ const Index = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("All");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [readingBook, setReadingBook] = useState<Book | null>(null);
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [pdfLoading, setPdfLoading] = useState(false);
-  const [pdfError, setPdfError] = useState(false);
-
-  useEffect(() => {
-    if (!readingBook?.pdfUrl) return;
-    setPdfLoading(true);
-    setPdfError(false);
-    let cancelled = false;
-
-    fetch(readingBook.pdfUrl)
-      .then((res) => res.blob())
-      .then((blob) => {
-        if (cancelled) return;
-        setBlobUrl(URL.createObjectURL(blob));
-        setPdfLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) { setPdfError(true); setPdfLoading(false); }
-      });
-
-    return () => {
-      cancelled = true;
-      setBlobUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
-    };
-  }, [readingBook]);
 
   const closeReader = () => {
     setReadingBook(null);
-    if (blobUrl) URL.revokeObjectURL(blobUrl);
-    setBlobUrl(null);
   };
 
   const filtered = useMemo(() => {
