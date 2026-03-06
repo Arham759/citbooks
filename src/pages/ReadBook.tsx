@@ -67,9 +67,10 @@ const ReadBook = () => {
       {/* PDF Viewer */}
       <div className="flex-1">
         <iframe
-          src={`https://docs.google.com/gview?url=${encodeURIComponent(book.pdfUrl!)}&embedded=true`}
+          src={book.pdfUrl!}
           title={book.title}
           className="w-full h-[calc(100vh-3.5rem)] border-none"
+          allow="fullscreen"
         />
       </div>
     </div>
