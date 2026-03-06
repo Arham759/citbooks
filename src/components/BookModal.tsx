@@ -7,8 +7,7 @@ interface BookModalProps {
   onRead?: (book: Book) => void;
 }
 
-const BookModal = ({ book, onClose }: BookModalProps) => {
-  const navigate = useNavigate();
+const BookModal = ({ book, onClose, onRead }: BookModalProps) => {
   if (!book) return null;
 
   return (
