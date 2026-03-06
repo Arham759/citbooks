@@ -1,11 +1,40 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, BookOpen } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Download, BookOpen, Loader2 } from "lucide-react";
 import { books } from "@/data/books";
 
 const ReadBook = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const book = books.find((b) => b.id === id);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (!book?.pdfUrl) return;
+    let cancelled = false;
+
+    fetch(book.pdfUrl)
+      .then((res) => res.blob())
+      .then((blob) => {
+        if (cancelled) return;
+        const url = URL.createObjectURL(blob);
+        setBlobUrl(url);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+    };
+  }, [book?.pdfUrl]);
 
   if (!book || !book.pdfUrl) {
     return (
@@ -66,12 +95,32 @@ const ReadBook = () => {
 
       {/* PDF Viewer */}
       <div className="flex-1">
-        <iframe
-          src={book.pdfUrl!}
-          title={book.title}
-          className="w-full h-[calc(100vh-3.5rem)] border-none"
-          allow="fullscreen"
-        />
+        {loading && (
+          <div className="flex items-center justify-center h-[calc(100vh-3.5rem)]">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        )}
+        {error && (
+          <div className="flex flex-col items-center justify-center h-[calc(100vh-3.5rem)] gap-4">
+            <p className="text-muted-foreground">Failed to load PDF.</p>
+            <a
+              href={book.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium"
+            >
+              Open in new tab
+            </a>
+          </div>
+        )}
+        {blobUrl && (
+          <iframe
+            src={blobUrl}
+            title={book.title}
+            className="w-full h-[calc(100vh-3.5rem)] border-none"
+            allow="fullscreen"
+          />
+        )}
       </div>
     </div>
   );
