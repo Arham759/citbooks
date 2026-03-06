@@ -64,34 +64,7 @@ const Index = () => {
           </div>
         </header>
 
-        <div className="flex-1">
-          {pdfLoading && (
-            <div className="flex items-center justify-center h-[calc(100vh-3.5rem)]">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          )}
-          {pdfError && (
-            <div className="flex flex-col items-center justify-center h-[calc(100vh-3.5rem)] gap-4">
-              <p className="text-muted-foreground">Failed to load PDF.</p>
-              <a
-                href={readingBook.pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium"
-              >
-                Open in new tab
-              </a>
-            </div>
-          )}
-          {blobUrl && (
-            <iframe
-              src={blobUrl}
-              title={readingBook.title}
-              className="w-full h-[calc(100vh-3.5rem)] border-none"
-              allow="fullscreen"
-            />
-          )}
-        </div>
+        <PdfViewer url={readingBook.pdfUrl!} title={readingBook.title} />
       </div>
     );
   }
