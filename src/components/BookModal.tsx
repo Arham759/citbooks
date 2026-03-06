@@ -64,7 +64,7 @@ const BookModal = ({ book, onClose, onRead }: BookModalProps) => {
           {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
-              onClick={() => { onClose(); navigate(`/read/${book.id}`); }}
+              onClick={() => onRead?.(book)}
               disabled={!book.pdfUrl}
               className={`flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 cursor-not-allowed" : ""}`}
             >

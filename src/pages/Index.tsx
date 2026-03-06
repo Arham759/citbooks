@@ -54,6 +54,75 @@ const Index = () => {
     });
   }, [search, activeCategory]);
 
+  // If reading a book, show the PDF reader view
+  if (readingBook) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={closeReader}
+                className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <div className="min-w-0">
+                <h1 className="font-display text-base font-semibold text-foreground truncate">
+                  {readingBook.title}
+                </h1>
+                <p className="text-xs text-muted-foreground truncate">
+                  {readingBook.author}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const a = document.createElement("a");
+                a.href = readingBook.pdfUrl!;
+                a.download = readingBook.title + ".pdf";
+                a.click();
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Download</span>
+            </button>
+          </div>
+        </header>
+
+        <div className="flex-1">
+          {pdfLoading && (
+            <div className="flex items-center justify-center h-[calc(100vh-3.5rem)]">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          )}
+          {pdfError && (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-3.5rem)] gap-4">
+              <p className="text-muted-foreground">Failed to load PDF.</p>
+              <a
+                href={readingBook.pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium"
+              >
+                Open in new tab
+              </a>
+            </div>
+          )}
+          {blobUrl && (
+            <iframe
+              src={blobUrl}
+              title={readingBook.title}
+              className="w-full h-[calc(100vh-3.5rem)] border-none"
+              allow="fullscreen"
+            />
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -127,7 +196,6 @@ const Index = () => {
                   onView={setSelectedBook}
                   index={i}
                 />
-                {/* Insert a subtle inline ad after every 4th book */}
                 {i === 3 && (
                   <div key="ad-inline" className="sm:col-span-2">
                     <AdBanner variant="inline" />
@@ -146,16 +214,18 @@ const Index = () => {
         )}
       </section>
 
-      {/* Non-intrusive bottom ad bar */}
       <AdBanner variant="bottom" />
 
-      {/* Footer */}
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
         <p>© 2026 CIT Library — For educational purposes only</p>
       </footer>
 
       {/* Modal */}
-      <BookModal book={selectedBook} onClose={() => setSelectedBook(null)} />
+      <BookModal
+        book={selectedBook}
+        onClose={() => setSelectedBook(null)}
+        onRead={(book) => { setSelectedBook(null); setReadingBook(book); }}
+      />
     </div>
   );
 };
