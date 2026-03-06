@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect } from "react";
-import { Search, BookOpen, Library, ArrowLeft, Download, Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, BookOpen, Library, ArrowLeft, Download } from "lucide-react";
 import { books, categories, Category, Book } from "@/data/books";
 import BookCard from "@/components/BookCard";
 import BookModal from "@/components/BookModal";
 import AdBanner from "@/components/AdBanner";
+import PdfViewer from "@/components/PdfViewer";
 
 const Index = () => {
   const [search, setSearch] = useState("");
