@@ -1,46 +1,19 @@
-import { useState, useMemo, useEffect } from "react";
-import { Search, BookOpen, Library, ArrowLeft, Download, Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, BookOpen, Library, ArrowLeft, Download } from "lucide-react";
 import { books, categories, Category, Book } from "@/data/books";
 import BookCard from "@/components/BookCard";
 import BookModal from "@/components/BookModal";
 import AdBanner from "@/components/AdBanner";
+import PdfViewer from "@/components/PdfViewer";
 
 const Index = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<Category>("All");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [readingBook, setReadingBook] = useState<Book | null>(null);
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
-  const [pdfLoading, setPdfLoading] = useState(false);
-  const [pdfError, setPdfError] = useState(false);
-
-  useEffect(() => {
-    if (!readingBook?.pdfUrl) return;
-    setPdfLoading(true);
-    setPdfError(false);
-    let cancelled = false;
-
-    fetch(readingBook.pdfUrl)
-      .then((res) => res.blob())
-      .then((blob) => {
-        if (cancelled) return;
-        setBlobUrl(URL.createObjectURL(blob));
-        setPdfLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) { setPdfError(true); setPdfLoading(false); }
-      });
-
-    return () => {
-      cancelled = true;
-      setBlobUrl((prev) => { if (prev) URL.revokeObjectURL(prev); return null; });
-    };
-  }, [readingBook]);
 
   const closeReader = () => {
     setReadingBook(null);
-    if (blobUrl) URL.revokeObjectURL(blobUrl);
-    setBlobUrl(null);
   };
 
   const filtered = useMemo(() => {
@@ -91,34 +64,7 @@ const Index = () => {
           </div>
         </header>
 
-        <div className="flex-1">
-          {pdfLoading && (
-            <div className="flex items-center justify-center h-[calc(100vh-3.5rem)]">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          )}
-          {pdfError && (
-            <div className="flex flex-col items-center justify-center h-[calc(100vh-3.5rem)] gap-4">
-              <p className="text-muted-foreground">Failed to load PDF.</p>
-              <a
-                href={readingBook.pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium"
-              >
-                Open in new tab
-              </a>
-            </div>
-          )}
-          {blobUrl && (
-            <iframe
-              src={blobUrl}
-              title={readingBook.title}
-              className="w-full h-[calc(100vh-3.5rem)] border-none"
-              allow="fullscreen"
-            />
-          )}
-        </div>
+        <PdfViewer url={readingBook.pdfUrl!} title={readingBook.title} />
       </div>
     );
   }
