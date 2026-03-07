@@ -1,23 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import AdBanner from "./AdBanner";
 
-// Load pdf.js from CDN
 const PDFJS_CDN = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379";
-
-function loadPdfJs(): Promise<any> {
-  return new Promise((resolve, reject) => {
-    if ((window as any).pdfjsLib) {
-      resolve((window as any).pdfjsLib);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = `${PDFJS_CDN}/pdf.min.mjs`;
-    script.type = "module";
-    script.onload = () => resolve((window as any).pdfjsLib);
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
 
 interface PdfViewerProps {
   url: string;
@@ -25,20 +10,19 @@ interface PdfViewerProps {
 }
 
 const PdfViewer = ({ url, title }: PdfViewerProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pdfDoc, setPdfDoc] = useState<any>(null);
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [renderedPages, setRenderedPages] = useState<string[]>([]);
 
+  // Load PDF
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(false);
 
-    // Fetch PDF as array buffer to avoid CORS issues with pdf.js
     fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("fetch failed");
@@ -46,7 +30,6 @@ const PdfViewer = ({ url, title }: PdfViewerProps) => {
       })
       .then(async (data) => {
         if (cancelled) return;
-        // Dynamically import pdf.js as ES module
         const pdfjsLib = await import(
           /* @vite-ignore */
           `${PDFJS_CDN}/pdf.min.mjs`
@@ -66,37 +49,33 @@ const PdfViewer = ({ url, title }: PdfViewerProps) => {
         }
       });
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [url]);
 
-  const renderPage = useCallback(
-    async (pageNum: number) => {
-      if (!pdfDoc || !canvasRef.current || !containerRef.current) return;
-      try {
-        const p = await pdfDoc.getPage(pageNum);
-        const containerWidth = containerRef.current.clientWidth - 32; // padding
-        const unscaledViewport = p.getViewport({ scale: 1 });
-        const scale = Math.min(containerWidth / unscaledViewport.width, 2.5);
-        const viewport = p.getViewport({ scale });
+  // Render all pages as images for smooth scrolling
+  useEffect(() => {
+    if (!pdfDoc) return;
+    let cancelled = false;
 
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d")!;
+    const renderAll = async () => {
+      const pages: string[] = [];
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        if (cancelled) return;
+        const page = await pdfDoc.getPage(i);
+        const viewport = page.getViewport({ scale: 1.5 });
+        const canvas = document.createElement("canvas");
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-
-        await p.render({ canvasContext: ctx, viewport }).promise;
-      } catch (err) {
-        console.error("Page render error:", err);
+        const ctx = canvas.getContext("2d")!;
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        pages.push(canvas.toDataURL("image/jpeg", 0.85));
       }
-    },
-    [pdfDoc]
-  );
+      if (!cancelled) setRenderedPages(pages);
+    };
 
-  useEffect(() => {
-    if (pdfDoc) renderPage(page);
-  }, [page, renderPage, pdfDoc]);
+    renderAll();
+    return () => { cancelled = true; };
+  }, [pdfDoc]);
 
   if (loading) {
     return (
@@ -122,36 +101,58 @@ const PdfViewer = ({ url, title }: PdfViewerProps) => {
     );
   }
 
+  const showRendering = renderedPages.length === 0 && totalPages > 0;
+
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)]">
-      {/* Page controls */}
+      {/* Page count bar */}
       <div className="flex items-center justify-center gap-4 py-2 bg-card border-b border-border">
-        <button
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          disabled={page <= 1}
-          className="p-1.5 rounded-full hover:bg-muted disabled:opacity-30 transition-colors text-foreground"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
         <span className="text-sm text-foreground font-medium">
-          Page {page} of {totalPages}
+          {showRendering
+            ? "Rendering pages..."
+            : `${totalPages} pages — Scroll to read`}
         </span>
-        <button
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          disabled={page >= totalPages}
-          className="p-1.5 rounded-full hover:bg-muted disabled:opacity-30 transition-colors text-foreground"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
       </div>
 
-      {/* Canvas */}
+      {/* Scrollable pages */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-auto flex justify-center bg-muted/50 p-4"
+        className="flex-1 overflow-auto bg-muted/50"
       >
-        <canvas ref={canvasRef} className="shadow-lg max-w-full" />
+        <div className="max-w-3xl mx-auto py-4 px-4 space-y-4">
+          {showRendering && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          )}
+
+          {renderedPages.map((src, i) => (
+            <div key={i}>
+              <div className="relative">
+                <img
+                  src={src}
+                  alt={`Page ${i + 1}`}
+                  className="w-full shadow-lg rounded"
+                  loading="lazy"
+                />
+                <span className="absolute bottom-2 right-3 text-xs bg-foreground/70 text-background px-2 py-0.5 rounded">
+                  {i + 1} / {totalPages}
+                </span>
+              </div>
+
+              {/* Insert ad every 5 pages */}
+              {(i + 1) % 5 === 0 && i < renderedPages.length - 1 && (
+                <div className="my-4">
+                  <AdBanner variant="inline" />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Bottom ad */}
+      <AdBanner variant="bottom" />
     </div>
   );
 };
