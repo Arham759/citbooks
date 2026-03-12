@@ -48,4 +48,16 @@ export const books: Book[] = [
     year: 2023,
     pdfUrl: "https://idczsfnlvpsiwgsdxjmr.supabase.co/storage/v1/object/public/cit-books-00/(ustad360.com) Tarjama Tul Quran 12 02-06-23 Grade 12_Freeze.pdf",
   },
+  {
+    id: "15",
+    title: "Math Notes Paper A",
+    author: "CIT Faculty",
+    category: "Programming",
+    description:
+      "Mathematics notes and study materials for Paper A.",
+    cover: "",
+    pages: 150,
+    year: 2024,
+    pdfUrl: "https://idczsfnlvpsiwgsdxjmr.supabase.co/storage/v1/object/public/cit-books-00//MATH_NOTES_PAPER_A.pdf",
+  },
 ];
