@@ -47,6 +47,7 @@ export const books: Book[] = [
     pages: 200,
     year: 2023,
     pdfUrl: "https://idczsfnlvpsiwgsdxjmr.supabase.co/storage/v1/object/public/cit-books-00/(ustad360.com) Tarjama Tul Quran 12 02-06-23 Grade 12_Freeze.pdf",
+  },
   {
     id: "15",
     title: "Math Notes Paper A",
