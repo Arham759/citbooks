@@ -12,61 +12,59 @@ const BookModal = ({ book, onClose, onRead }: BookModalProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/60 backdrop-blur-md animate-fade-in"
       onClick={onClose}
       style={{ animationDuration: "0.2s" }}
     >
       <div
-        className="bg-card rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-border"
+        className="relative bg-gradient-card rounded-2xl shadow-elegant max-w-lg w-full max-h-[90vh] overflow-y-auto border border-border opacity-0 animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between p-6 border-b border-border">
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-accent rounded-t-2xl" />
+
+        <div className="flex items-start justify-between p-6 pb-5 border-b border-border">
           <div className="flex-1 pr-4">
-            <h2 className="font-display text-2xl font-bold text-foreground mb-1">
+            <h2 className="font-display text-2xl font-bold text-foreground mb-1.5 leading-tight">
               {book.title}
             </h2>
-            <p className="text-muted-foreground flex items-center gap-1.5">
+            <p className="text-muted-foreground flex items-center gap-1.5 text-sm">
               <User className="w-4 h-4" />
               {book.author}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+            className="p-2 rounded-full hover:bg-muted transition-all text-muted-foreground hover:text-foreground hover:rotate-90 duration-300"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Body */}
         <div className="p-6 space-y-5">
           <p className="text-foreground/80 leading-relaxed">{book.description}</p>
 
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-muted rounded-lg p-3 text-center">
-              <FileText className="w-5 h-5 mx-auto mb-1 text-accent" />
-              <p className="text-sm font-medium text-foreground">{book.pages}</p>
-              <p className="text-xs text-muted-foreground">Pages</p>
-            </div>
-            <div className="bg-muted rounded-lg p-3 text-center">
-              <Calendar className="w-5 h-5 mx-auto mb-1 text-accent" />
-              <p className="text-sm font-medium text-foreground">{book.year}</p>
-              <p className="text-xs text-muted-foreground">Year</p>
-            </div>
-            <div className="bg-muted rounded-lg p-3 text-center">
-              <BookOpen className="w-5 h-5 mx-auto mb-1 text-accent" />
-              <p className="text-sm font-medium text-foreground">{book.category}</p>
-              <p className="text-xs text-muted-foreground">Category</p>
-            </div>
+            {[
+              { icon: FileText, value: book.pages, label: "Pages" },
+              { icon: Calendar, value: book.year, label: "Year" },
+              { icon: BookOpen, value: book.category, label: "Category" },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="bg-muted/60 border border-border/60 rounded-xl p-3 text-center hover:border-accent/40 hover:bg-muted transition-colors"
+              >
+                <stat.icon className="w-5 h-5 mx-auto mb-1.5 text-accent" />
+                <p className="text-sm font-semibold text-foreground truncate">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button
               onClick={() => onRead?.(book)}
               disabled={!book.pdfUrl}
-              className={`flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`flex-1 flex items-center justify-center gap-2 bg-gradient-primary text-primary-foreground rounded-xl py-3 font-medium shadow-soft hover:shadow-elegant transition-smooth hover:-translate-y-0.5 ${!book.pdfUrl ? "opacity-50 cursor-not-allowed hover:translate-y-0" : ""}`}
             >
               <BookOpen className="w-5 h-5" />
               Read PDF
@@ -80,7 +78,7 @@ const BookModal = ({ book, onClose, onRead }: BookModalProps) => {
                 a.click();
               }}
               disabled={!book.pdfUrl}
-              className={`flex-1 flex items-center justify-center gap-2 bg-accent text-accent-foreground rounded-lg py-3 font-medium hover:opacity-90 transition-opacity ${!book.pdfUrl ? "opacity-50 cursor-not-allowed" : ""}`}
+              className={`flex-1 flex items-center justify-center gap-2 bg-gradient-accent text-accent-foreground rounded-xl py-3 font-medium shadow-soft hover:shadow-glow transition-smooth hover:-translate-y-0.5 ${!book.pdfUrl ? "opacity-50 cursor-not-allowed hover:translate-y-0" : ""}`}
             >
               <Download className="w-5 h-5" />
               Download
