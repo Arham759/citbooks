@@ -1,5 +1,5 @@
 import { Book } from "@/data/books";
-import { BookOpen, FileText, Calendar, ArrowUpRight, Code2, Network, Database as DatabaseIcon, Globe, ShieldCheck, BarChart3, Cpu, BookMarked, type LucideIcon } from "lucide-react";
+import { BookOpen, FileText, Calendar, ArrowUpRight } from "lucide-react";
 
 interface BookCardProps {
   book: Book;
@@ -7,14 +7,14 @@ interface BookCardProps {
   index: number;
 }
 
-const categoryIcons: Record<string, LucideIcon> = {
-  Programming: Code2,
-  Networking: Network,
-  Database: DatabaseIcon,
-  "Web Development": Globe,
-  Cybersecurity: ShieldCheck,
-  "Data Science": BarChart3,
-  "Operating Systems": Cpu,
+const categoryIcons: Record<string, string> = {
+  Programming: "📘",
+  Networking: "🌐",
+  Database: "🗄️",
+  "Web Development": "💻",
+  Cybersecurity: "🔐",
+  "Data Science": "📊",
+  "Operating Systems": "⚙️",
 };
 
 const BookCard = ({ book, onView, index }: BookCardProps) => {
@@ -31,15 +31,9 @@ const BookCard = ({ book, onView, index }: BookCardProps) => {
       <div className="relative h-52 overflow-hidden bg-gradient-primary">
         <div className="absolute inset-0 bg-grain opacity-30" />
         <div className="absolute inset-0 flex items-center justify-center">
-          {(() => {
-            const Icon = categoryIcons[book.category] || BookMarked;
-            return (
-              <Icon
-                className="w-20 h-20 text-primary-foreground/90 drop-shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6"
-                strokeWidth={1.5}
-              />
-            );
-          })()}
+          <span className="text-7xl drop-shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
+            {categoryIcons[book.category] || "📖"}
+          </span>
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent" />
 
