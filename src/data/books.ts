@@ -40,7 +40,7 @@ export const books: Book[] = [
     id: "14",
     title: "Tarjama Tul Quran - Grade 12",
     author: "Ustad 360",
-    category: "Operating Systems",
+    category: "Quran",
     description:
       "Tarjama Tul Quran textbook for Grade 12 students.",
     cover: "",
