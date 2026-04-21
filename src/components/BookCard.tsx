@@ -15,6 +15,7 @@ const categoryIcons: Record<string, string> = {
   Cybersecurity: "🔐",
   "Data Science": "📊",
   "Operating Systems": "⚙️",
+  Quran: "📖",
 };
 
 const BookCard = ({ book, onView, index }: BookCardProps) => {
